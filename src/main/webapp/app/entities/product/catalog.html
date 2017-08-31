@@ -1,0 +1,88 @@
+<div>
+    <table class="jh-table table table-striped">
+        <tr>
+            <td style="vertical-align: text-top">
+                <div class="table-responsive">
+                    <br>
+                    <ul>
+                        <li ng-repeat="category in vm.categories track by category.id" ng-if="category.parent == null">
+                            <menu-link section="category.name">
+                                <a ui-sref="catalog({id:category.id})" ng-if="category.id != vm.currentCatId">{{category.name}}</a>
+                                <span  ng-if="category.id == vm.currentCatId">{{category.name}}</span>
+                                <ul>
+                                    <li ng-repeat="cat2level in vm.categories track by cat2level.id" ng-if="cat2level.parent != null && cat2level.parent.id == category.id">
+                                        <menu-link section="cat2level.name">
+                                            <a ui-sref="catalog({id:cat2level.id})" ng-if="cat2level.id != vm.currentCatId">{{cat2level.name}}</a>
+                                            <span  ng-if="cat2level.id == vm.currentCatId">{{cat2level.name}}</span>
+                                            <ul>
+                                                <li ng-repeat="cat3level in vm.categories track by cat3level.id" ng-if="cat3level.parent != null && cat3level.parent.id == cat2level.id">
+                                                    <menu-link section="cat3level.name">
+                                                        <a ui-sref="catalog({id:cat3level.id})" ng-if="cat3level.id != vm.currentCatId">{{cat3level.name}}</a>
+                                                        <span  ng-if="cat3level.id == vm.currentCatId">{{cat3level.name}}</span>
+                                                    </menu-link>
+                                                </li>
+                                            </ul>
+                                        </menu-link>
+                                    </li>
+                                </ul>
+                            </menu-link>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+            <td>
+                <div class="table-responsive">
+                    <table class="jh-table table table-striped">
+                        <thead>
+                        <tr jh-sort="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
+                            <th jh-sort-by="name"><span>Name</span> <span class="glyphicon glyphicon-sort"></span></th>
+                            <th jh-sort-by="description"><span>Description</span> <span class="glyphicon glyphicon-sort"></span></th>
+                            <th jh-sort-by="price"><span>Price</span> <span class="glyphicon glyphicon-sort"></span></th>
+                            <th jh-sort-by="updated"><span>Updated</span> <span class="glyphicon glyphicon-sort"></span></th>
+                            <th jh-sort-by="imagePath"><span>Image</span> <span class="glyphicon glyphicon-sort"></span></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="product in vm.products track by product.id">
+                            <td><a ui-sref="product-dto-detail({id:product.id})">{{product.name}}</a></td>
+                            <td>{{product.description}}</td>
+                            <td>{{product.price}} грн</td>
+                            <td>{{product.updated | date:'medium'}}</td>
+                            <td><img src="{{product.imagePath}}"></td>
+                            <td class="text-right">
+                                <div class="btn-group flex-btn-group-container">
+                                    <button type="submit"
+                                            ui-sref="product-dto-detail({id:product.id})"
+                                            class="btn btn-info btn-sm">
+                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                        <span class="hidden-sm-down"></span>
+                                    </button>
+                                    <button type="submit" has-authority="ROLE_ADMIN"
+                                            ui-sref="product-dto.edit({id:product.id})"
+                                            class="btn btn-primary btn-sm">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                        <span class="hidden-sm-down"></span>
+                                    </button>
+                                    <button type="submit" has-authority="ROLE_ADMIN"
+                                            ui-sref="product-dto.delete({id:product.id})"
+                                            class="btn btn-danger btn-sm">
+                                        <span class="glyphicon glyphicon-remove-circle"></span>
+                                        <span class="hidden-sm-down"></span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+
+    <div class="text-center">
+        <jhi-item-count page="vm.page" total="vm.queryCount" items-per-page="vm.itemsPerPage"></jhi-item-count>
+        <uib-pagination class="pagination-sm" total-items="vm.totalItems" items-per-page="vm.itemsPerPage" ng-model="vm.page" ng-change="vm.transition()"></uib-pagination>
+    </div>
+</div>

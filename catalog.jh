@@ -1,0 +1,27 @@
+entity Product {
+	name String required minlength(3) maxlength(128),
+  	description String maxlength(256),
+    price BigDecimal required min(0),
+    updated ZonedDateTime required,
+    imagePath String maxlength(128)
+}
+
+entity Category {
+	name String required minlength(3) maxlength(128),
+  	description String maxlength(256),
+    updated ZonedDateTime required,
+    imagePath String maxlength(128)
+}
+
+relationship OneToMany {
+
+	Category{childCategories} to Category{parent},   
+    Category{products} to Product{category}
+}
+
+
+paginate all with pagination
+
+service all with serviceImpl
+
+angularSuffix * with dto
