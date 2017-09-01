@@ -80,7 +80,7 @@ public class CategoryRepositoryUnitTest {
 
     private static Category[] CATEGORIES = new Category[3];
     @BeforeClass
-    public static void before() {
+    public static void init() {
         CATEGORIES[0] = new Category();
         CATEGORIES[0].setName("notebooks");
         CATEGORIES[0].setUpdated(ZonedDateTime.now());
@@ -93,7 +93,7 @@ public class CategoryRepositoryUnitTest {
     }
 
     @Before
-    public void before2() {
+    public void before() {
         CATEGORIES[0] = categoryRepository.save(CATEGORIES[0]);
         CATEGORIES[1] = categoryRepository.save(CATEGORIES[1]);
 

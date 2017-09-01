@@ -2,12 +2,15 @@ package catalog.web.rest;
 
 import catalog.CatalogApp;
 
+import catalog.domain.Category;
 import catalog.domain.Product;
+import catalog.repository.CategoryRepository;
 import catalog.repository.ProductRepository;
 import catalog.service.ProductService;
 import catalog.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -44,11 +47,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = CatalogApp.class)
 public class ProductResourceIntTest {
 
-    private static final String DEFAULT_NAME = "AAAAAAAAAA";
-    private static final String UPDATED_NAME = "BBBBBBBBBB";
+    private static final String DEFAULT_NAME = "Notebook";
+    private static final String UPDATED_NAME = "NotebookUpdated";
 
-    private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
-    private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
+    private static final String DEFAULT_DESCRIPTION = "Descr";
+    private static final String UPDATED_DESCRIPTION = "DescrUpdated";
 
     private static final BigDecimal DEFAULT_PRICE = new BigDecimal(0);
     private static final BigDecimal UPDATED_PRICE = new BigDecimal(1);
@@ -56,11 +59,14 @@ public class ProductResourceIntTest {
     private static final ZonedDateTime DEFAULT_UPDATED = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_UPDATED = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
-    private static final String DEFAULT_IMAGE_PATH = "AAAAAAAAAA";
-    private static final String UPDATED_IMAGE_PATH = "BBBBBBBBBB";
+    private static final String DEFAULT_IMAGE_PATH = "xxx";
+    private static final String UPDATED_IMAGE_PATH = "yyy";
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private ProductService productService;
@@ -80,6 +86,17 @@ public class ProductResourceIntTest {
     private MockMvc restProductMockMvc;
 
     private Product product;
+
+    private static Category CATEGORY_NOTEBOOKS = new Category();
+    private static Category CATEGORY_PHONES = new Category();
+
+    @BeforeClass
+    public static void init() {
+        CATEGORY_NOTEBOOKS.setName("notebooks");
+        CATEGORY_NOTEBOOKS.setUpdated(ZonedDateTime.now());
+        CATEGORY_PHONES.setName("phones");
+        CATEGORY_PHONES.setUpdated(ZonedDateTime.now());
+    }
 
     @Before
     public void setup() {
@@ -190,7 +207,6 @@ public class ProductResourceIntTest {
     @Test
     @Transactional
     public void getAllProducts() throws Exception {
-
         productRepository.saveAndFlush(product);
 
         restProductMockMvc.perform(get("/api/products?sort=id,desc"))
@@ -207,9 +223,19 @@ public class ProductResourceIntTest {
     @Test
     @Transactional
     public void getAllProductsByCategory() throws Exception {
+        CATEGORY_NOTEBOOKS = categoryRepository.saveAndFlush(CATEGORY_NOTEBOOKS);
+        CATEGORY_PHONES = categoryRepository.saveAndFlush(CATEGORY_PHONES);
+
+        product.setCategory(CATEGORY_NOTEBOOKS);
+
         productRepository.saveAndFlush(product);
 
-        restProductMockMvc.perform(get("/api/products?sort=id,desc"))
+        Product phone = new Product(null, "phone", "green", new BigDecimal("1000"),
+            ZonedDateTime.now(), "", CATEGORY_PHONES);
+        productRepository.saveAndFlush(phone);
+
+        restProductMockMvc.perform(get("/api/catproducts/" +
+            CATEGORY_NOTEBOOKS.getId().toString() + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(product.getId().intValue())))
@@ -218,6 +244,17 @@ public class ProductResourceIntTest {
             .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.intValue())))
             .andExpect(jsonPath("$.[*].updated").value(hasItem(sameInstant(DEFAULT_UPDATED))))
             .andExpect(jsonPath("$.[*].imagePath").value(hasItem(DEFAULT_IMAGE_PATH.toString())));
+
+        restProductMockMvc.perform(get("/api/catproducts/" +
+            CATEGORY_PHONES.getId().toString() + "?sort=id,desc"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(phone.getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(phone.getName().toString())))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(phone.getDescription().toString())))
+            .andExpect(jsonPath("$.[*].price").value(hasItem(phone.getPrice().intValue())))
+            .andExpect(jsonPath("$.[*].updated").value(hasItem(sameInstant(phone.getUpdated()))))
+            .andExpect(jsonPath("$.[*].imagePath").value(hasItem(phone.getImagePath().toString())));
     }
 
     @Test

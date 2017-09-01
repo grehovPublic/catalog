@@ -43,17 +43,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = CatalogApp.class)
 public class CategoryResourceIntTest {
 
-    private static final String DEFAULT_NAME = "AAAAAAAAAA";
-    private static final String UPDATED_NAME = "BBBBBBBBBB";
+    private static final String DEFAULT_NAME = "Notebooks";
+    private static final String UPDATED_NAME = "NoteBooksUpdated";
 
-    private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
-    private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
+    private static final String DEFAULT_DESCRIPTION = "Descr";
+    private static final String UPDATED_DESCRIPTION = "DescrUpdated";
 
     private static final ZonedDateTime DEFAULT_UPDATED = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_UPDATED = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
-    private static final String DEFAULT_IMAGE_PATH = "AAAAAAAAAA";
-    private static final String UPDATED_IMAGE_PATH = "BBBBBBBBBB";
+    private static final String DEFAULT_IMAGE_PATH = "xxx";
+    private static final String UPDATED_IMAGE_PATH = "yyy";
 
     @Autowired
     private CategoryRepository categoryRepository;

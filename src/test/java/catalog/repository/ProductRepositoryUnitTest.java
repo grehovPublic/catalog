@@ -118,7 +118,7 @@ public class ProductRepositoryUnitTest {
     private static Category CATEGORY_PHONES = new Category();
 
     @BeforeClass
-    public static void before() {
+    public static void init() {
         CATEGORY_NOTEBOOKS.setName("notebooks");
         CATEGORY_NOTEBOOKS.setUpdated(ZonedDateTime.now());
         CATEGORY_PHONES.setName("phones");
@@ -140,7 +140,7 @@ public class ProductRepositoryUnitTest {
     }
 
     @Before
-    public void before2() {
+    public void before() {
         CATEGORY_NOTEBOOKS = categoryRepository.save(CATEGORY_NOTEBOOKS);
         CATEGORY_PHONES = categoryRepository.save(CATEGORY_PHONES);
 
