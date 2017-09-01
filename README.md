@@ -6,7 +6,7 @@
 
 ## Run:
 	(JRE 1.8)
-    java -jar build/libs/<appName>.war --redis.host-name=<path> --redis.port=<port>
+    java -jar build/libs/<appName>.war --redis.host-name=<path> --redis.port=<port> --redis.password=<pass> --redis.database=<dbname>
 
 	
 Then navigate to [http://localhost:8080] in your browser.

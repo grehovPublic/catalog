@@ -44,6 +44,8 @@ spring:
 redis:
     host-name: ${SERVER_HOST}
     port: ${SERVER_PORT}
+    password: ${PASSWORD}
+    database: ${DB}
 
 liquibase:
     contexts: prod
